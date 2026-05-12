@@ -9,7 +9,22 @@ info()  { echo -e "${GREEN}[seshat]${NC} $*"; }
 warn()  { echo -e "${YELLOW}[seshat]${NC} $*"; }
 error() { echo -e "${RED}[seshat]${NC} $*" >&2; exit 1; }
 
-# ── 1. Python venv ─────────────────────────────────────────────────────────
+# ── 1. System requirements ─────────────────────────────────────────────────
+info "Checking system requirements..."
+if ! command -v curl &>/dev/null; then
+    info "curl not found — installing..."
+    if command -v apt-get &>/dev/null; then
+        sudo apt-get install -y curl
+    elif command -v dnf &>/dev/null; then
+        sudo dnf install -y curl
+    elif command -v yum &>/dev/null; then
+        sudo yum install -y curl
+    else
+        error "Cannot install curl automatically. Please install it manually and re-run."
+    fi
+fi
+
+# ── 2. Python venv ────────────────────────────────────────────────────────
 info "Checking Python environment..."
 command -v python3 &>/dev/null || error "python3 not found. Install Python 3.11+."
 
@@ -42,7 +57,7 @@ docker compose up -d
 
 # ── 4. Wait for Ollama ─────────────────────────────────────────────────────
 info "Waiting for Ollama to be ready..."
-MAX_WAIT=60
+MAX_WAIT=120
 ELAPSED=0
 until curl -sf http://localhost:11434/api/tags &>/dev/null; do
     if [ "$ELAPSED" -ge "$MAX_WAIT" ]; then
