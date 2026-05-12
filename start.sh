@@ -30,7 +30,14 @@ info "Dependencies installed."
 
 # ── 3. Docker Compose (Ollama + Open-WebUI) ────────────────────────────────
 info "Starting Docker services (Ollama + Open-WebUI)..."
-command -v docker &>/dev/null || error "Docker not found. Install Docker Desktop."
+command -v docker &>/dev/null || error "Docker not found. Install Docker: https://docs.docker.com/engine/install/"
+
+if ! docker info &>/dev/null; then
+    error "Cannot reach the Docker daemon. Fix with:
+    sudo usermod -aG docker \$USER
+  Then log out and back in (or run: newgrp docker), and re-run this script."
+fi
+
 docker compose up -d
 
 # ── 4. Wait for Ollama ─────────────────────────────────────────────────────
