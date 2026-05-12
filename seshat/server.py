@@ -75,6 +75,23 @@ def create_app(
     # Health / info
     # ------------------------------------------------------------------
 
+    @app.get("/")
+    def root() -> dict:
+        return {
+            "name": "Seshat",
+            "version": "0.1.0",
+            "status": "ok",
+            "docs": "/docs",
+            "endpoints": {
+                "health": "GET /health",
+                "models": "GET /v1/models",
+                "chat": "POST /v1/chat/completions",
+                "question": "POST /api/question",
+                "ingest": "POST /api/ingest",
+                "status": "GET /api/status",
+            },
+        }
+
     @app.get("/health")
     def health() -> dict:
         return {"status": "ok", "version": "0.1.0"}
