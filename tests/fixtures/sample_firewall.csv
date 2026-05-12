@@ -1,0 +1,9 @@
+timestamp,severity,category,action,description,rule_name,src_ip,dst_ip,src_port,dst_port,protocol,direction,hostname,user
+2024-01-15T08:23:11Z,high,malware,blocked,Outbound connection to known C2 server,block_c2_outbound,192.168.1.105,185.220.101.42,49521,443,TCP,outbound,workstation-042,jdoe
+2024-01-15T08:31:47Z,critical,exploitation,blocked,SQL injection attempt against internal web application,waf_sqli_block,203.0.113.77,10.0.1.25,52341,443,TCP,inbound,,
+2024-01-15T09:04:22Z,medium,policy-violation,allowed,Outbound HTTP traffic to uncategorised domain,default_allow_out,192.168.2.18,198.51.100.9,54831,80,TCP,outbound,laptop-019,msmith
+2024-01-15T09:12:55Z,low,reconnaissance,detected,ICMP sweep detected from external host,detect_icmp_sweep,203.0.113.14,10.0.0.1,,,ICMP,inbound,,
+2024-01-15T10:05:03Z,high,data-exfiltration,blocked,Large outbound HTTPS transfer to cloud storage provider,block_data_exfil,192.168.3.44,162.125.6.6,49999,443,TCP,outbound,server-db01,svc_backup
+2024-01-15T10:17:38Z,critical,malware,blocked,Ransomware lateral movement attempt via SMB,block_smb_lateral,192.168.1.105,192.168.1.200,49152,445,TCP,internal,workstation-042,jdoe
+2024-01-15T11:30:00Z,info,authentication,allowed,Successful VPN authentication,allow_vpn,203.0.113.99,10.0.0.1,,,UDP,inbound,,rgarcia
+2024-01-15T12:45:15Z,medium,policy-violation,blocked,P2P application traffic detected and blocked,block_p2p,192.168.4.22,198.51.100.44,6881,6881,TCP,outbound,workstation-107,bwilson

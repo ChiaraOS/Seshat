@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -m venv .venv)",
+      "Bash(.venv/Scripts/pip install *)",
+      "PowerShell(Set-Location \"c:\\\\Users\\\\oriol\\\\OneDrive - GRUPO ILUNION\\\\Documentos\\\\Seshat\"; .\\\\.venv\\\\Scripts\\\\python.exe scripts/ingest.py ingest config/sources/firewall_csv.yaml --palace-path ./data/test_palace; Write-Host \"Exit: $LASTEXITCODE\")"
+    ]
+  }
+}

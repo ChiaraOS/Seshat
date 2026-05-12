@@ -1,0 +1,5 @@
+include README.md
+include LICENSE
+recursive-include frontend *
+recursive-include openwebui *
+recursive-include seshat *.py
