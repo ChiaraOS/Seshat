@@ -47,10 +47,14 @@ class EmailCsvAlertSource(BaseAlertSource):
         delimiter = self.config.get("delimiter", ",")
         body_column = self.config.get("body_column", "Cuerpo")
         alert_pattern = re.compile(
-            self.config["alert_line_pattern"], re.IGNORECASE | re.MULTILINE
+            self.config["alert_line_pattern"],
+            re.IGNORECASE | re.MULTILINE | re.VERBOSE,
         )
         subject_pattern_str = self.config.get("subject_pattern")
-        subject_re = re.compile(subject_pattern_str, re.IGNORECASE) if subject_pattern_str else None
+        subject_re = (
+            re.compile(subject_pattern_str, re.IGNORECASE | re.VERBOSE)
+            if subject_pattern_str else None
+        )
         severity_map: dict = self.config.get("severity_map", {})
 
         skipped = 0
