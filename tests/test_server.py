@@ -178,18 +178,36 @@ def test_api_ingest_nonexistent_file(client):
     assert r.status_code == 404
 
 
-def test_api_ingest_real_fixture(palace, mock_llm):
-    """Ingest via the API and verify the count increases."""
+def test_api_ingest_real_fixture(palace, mock_llm, tmp_path):
+    """Ingest via the API using a self-contained temp config."""
+    import yaml
+    from pathlib import Path
+
+    fixture_csv = (Path(__file__).parent / "fixtures" / "sample_firewall.csv").resolve()
+    config = {
+        "source_type": "csv",
+        "source_name": "test_fw",
+        "file_path": str(fixture_csv),
+        "field_mapping": {
+            "timestamp": "timestamp", "severity": "severity",
+            "category": "category", "action": "action",
+            "description": "description", "rule_name": "rule_name",
+            "src_ip": "src_ip", "dst_ip": "dst_ip",
+            "src_port": "src_port", "dst_port": "dst_port",
+            "protocol": "protocol", "direction": "direction",
+            "hostname": "hostname", "user": "user",
+        },
+        "mempalace": {"wing": "Firewall", "room_field": "severity"},
+    }
+    config_file = tmp_path / "fw.yaml"
+    config_file.write_text(yaml.dump(config))
+
     app = create_app(palace=palace, llm=mock_llm)
     c = TestClient(app)
 
     before = palace.count("Firewall", "high", "alerts")
-
-    r = c.post("/api/ingest", json={"config": "config/sources/firewall_csv.yaml"})
+    r = c.post("/api/ingest", json={"config": str(config_file)})
     assert r.status_code == 200
-    body = r.json()
-    assert body["wing"] == "Firewall"
-    assert body["ingested"] == 8
-
-    # high-severity room should now have more records
+    assert r.json()["wing"] == "Firewall"
+    assert r.json()["ingested"] == 8
     assert palace.count("Firewall", "high", "alerts") > before

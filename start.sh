@@ -79,17 +79,17 @@ else
     info "Model pulled."
 fi
 
-# ── 6. Ingest sample alert data ────────────────────────────────────────────
-info "Ingesting sample firewall alerts into MemPalace..."
-"$PYTHON" scripts/ingest.py ingest config/sources/firewall_csv.yaml
-info "Alerts ingested."
-
-# ── 7. Start Seshat server ─────────────────────────────────────────────────
+# ── 6. Start Seshat server ─────────────────────────────────────────────────
 echo ""
 info "=========================================="
 info " Seshat is starting on http://0.0.0.0:8000"
 info ""
-info " Open-WebUI   → http://localhost:3000"
+info " Open-WebUI → http://localhost:3000"
+info " API docs   → http://localhost:8000/docs"
+info ""
+info " To ingest your alerts:"
+info "   .venv/bin/python scripts/ingest.py ingest config/sources/<your_source>.yaml"
+info ""
 info " Add to Open-WebUI (Admin → Settings → Connections → OpenAI API):"
 info "   URL : http://host.docker.internal:8000/v1"
 info "   Key : seshat"
