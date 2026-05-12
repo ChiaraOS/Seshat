@@ -179,23 +179,28 @@ def test_api_ingest_nonexistent_file(client):
 
 
 def test_api_ingest_real_fixture(palace, mock_llm, tmp_path):
-    """Ingest via the API using a self-contained temp config."""
+    """Ingest via the API using entirely in-memory generated data."""
+    import textwrap
     import yaml
-    from pathlib import Path
 
-    fixture_csv = (Path(__file__).parent / "fixtures" / "sample_firewall.csv").resolve()
+    csv_content = textwrap.dedent("""\
+        timestamp,severity,category,action,src_ip,dst_ip,src_port,dst_port,protocol,direction
+        2024-01-15T08:23:11Z,high,malware,blocked,192.168.1.1,1.2.3.4,1234,443,TCP,outbound
+        2024-01-15T09:00:00Z,critical,exploitation,blocked,10.0.0.1,10.0.0.2,5555,80,TCP,inbound
+    """)
+    csv_file = tmp_path / "alerts.csv"
+    csv_file.write_text(csv_content)
+
     config = {
         "source_type": "csv",
         "source_name": "test_fw",
-        "file_path": str(fixture_csv),
+        "file_path": str(csv_file),
         "field_mapping": {
             "timestamp": "timestamp", "severity": "severity",
             "category": "category", "action": "action",
-            "description": "description", "rule_name": "rule_name",
             "src_ip": "src_ip", "dst_ip": "dst_ip",
             "src_port": "src_port", "dst_port": "dst_port",
             "protocol": "protocol", "direction": "direction",
-            "hostname": "hostname", "user": "user",
         },
         "mempalace": {"wing": "Firewall", "room_field": "severity"},
     }
@@ -209,5 +214,5 @@ def test_api_ingest_real_fixture(palace, mock_llm, tmp_path):
     r = c.post("/api/ingest", json={"config": str(config_file)})
     assert r.status_code == 200
     assert r.json()["wing"] == "Firewall"
-    assert r.json()["ingested"] == 8
+    assert r.json()["ingested"] == 2
     assert palace.count("Firewall", "high", "alerts") > before
