@@ -1,0 +1,51 @@
+source_type: email_csv
+source_name: sonicwall_fw01
+
+# Path to your Outlook-exported CSV
+file_path: /path/to/AlertesSOC.CSV
+
+# Outlook exports in Latin-1; change to utf-8-sig if your export differs
+encoding: latin-1
+delimiter: ","
+
+# Column in the CSV that contains the full email body
+body_column: "Cuerpo"
+
+# ── Alert line pattern ────────────────────────────────────────────────────
+# Matches the structured SonicWall log line embedded in the email body.
+# Named capture groups map directly to NormalizedAlert fields.
+#
+# Example line:
+#   04/08/2026 13:00:29 - 1369 - Firewall Settings - Alert - 99.84.9.100, 443, X1 - 88.27.254.19, 62996, X1 - tcp - Possible TCP Flood
+#
+alert_line_pattern: >-
+  (?P<timestamp>\d{2}/\d{2}/\d{4}\s+\d{2}:\d{2}:\d{2})
+  \s+-\s+\d+\s+-\s+
+  (?P<category>[^-]+?)\s+-\s+
+  (?P<severity_raw>\w+)\s+-\s+
+  (?P<src_ip>[\d.]+),\s*(?P<src_port>\d+),\s*\S+\s+-\s+
+  (?P<dst_ip>[\d.]+),\s*(?P<dst_port>\d+),\s*\S+\s+-\s+
+  (?P<protocol>\w+)\s+-\s+
+  (?P<description>[^\n\r]+)
+
+# ── Subject pattern ───────────────────────────────────────────────────────
+# Extracts the rule/alert name from the forwarded subject line in the body.
+#
+# Example subject line in body:
+#   Asunto: *** Alert from Network Security Appliance *** [18C241427D10] [Possible TCP Flood, Flood Protection, Firewall Settings]
+#
+subject_pattern: >-
+  Asunto:.*?\[[^\]]*\]\s*\[(?P<rule_name>[^\]]+)\]
+
+# ── Severity mapping ──────────────────────────────────────────────────────
+# Maps SonicWall severity labels to Seshat's severity enum.
+severity_map:
+  Alert:   high
+  Warning: medium
+  Notice:  low
+  Info:    info
+  Debug:   info
+
+mempalace:
+  wing: Firewall
+  room_field: severity

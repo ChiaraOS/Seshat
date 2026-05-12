@@ -1,9 +1,11 @@
 from .csv_source import CSVAlertSource
+from .email_csv_source import EmailCsvAlertSource
 
 # Registry maps source_type string → adapter class.
 # To add a new source: subclass BaseAlertSource, then add one line here.
 SOURCE_REGISTRY: dict = {
     "csv": CSVAlertSource,
+    "email_csv": EmailCsvAlertSource,
 }
 
 
